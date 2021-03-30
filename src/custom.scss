@@ -1,3 +1,11 @@
+$body-bg: #14192e;
+$gray-800: #14192e;
+$modal-content-color: #fff;
+$modal-content-bg: $body-bg;
+$modal-header-border-color: #707070;
+$close-color: #707070;
+$primary: #ea923e;
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -11,3 +19,5 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@import '~bootstrap/scss/bootstrap.scss';

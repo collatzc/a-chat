@@ -1,0 +1,53 @@
+.bubble {
+  padding: .9rem;
+  margin: 5px auto;
+  position: relative;
+  display: flex;
+
+  &:before {
+    content: attr(data-sender);
+    position: absolute;
+    bottom: -0.5em;
+    display: block;
+    font-size: .9rem;
+    color: hsla(0, 0%, 100%, .6);
+  }
+
+  &.right {
+    justify-content: flex-end;
+  }
+
+  &.left {
+    justify-content: flex-start;
+  }
+
+  &.right:before {
+    right: .9em;
+  }
+
+  &.left:before {
+    left: .9em;
+  }
+
+  span {
+    color: #fff;
+    display: block;
+    max-width: 75%;
+    padding: 7px 13px 7px 13px;
+    text-align: left;
+    word-wrap: break-word;
+  }
+
+  &.right span {
+    background-color: #14192e;
+    border: 2px solid #ea923e;
+    border-radius: 20px 20px 3px 20px;
+  }
+
+  &.left span {
+    background-color: #14192e;
+    border: 2px solid #ea923e;
+    border-radius: 20px 20px 20px 3px;
+  }
+
+}
