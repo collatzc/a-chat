@@ -1,13 +1,8 @@
 import React from 'react';
-import { Container, Alert } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-import { selectChatroomName } from 'src/store';
+import { Container } from 'react-bootstrap';
+import { useAppSelector, useAppDispatch, appendMessages, setLastMessageId, getTableRows } from 'src/store';
 import MessageBubble from './MessageBubble';
-import { useFetch } from 'src/hooks';
 import './MessageBubble.scss';
-
-type Props = {
-};
 
 type MessageRow = {
   message_id: number;
@@ -15,43 +10,36 @@ type MessageRow = {
   sender: string;
 };
 
-interface MessageRows {
-  rows: MessageRow[]
-}
+const ChatContainer: React.FC<{}> = () => {
+  const [conter, setCounter] = React.useState(0);
+  const _scope = useAppSelector(state => state.chatroom.scope);
+  const _sender = useAppSelector(state => state.chatroom.sender);
+  const _lastMessageId = useAppSelector(state => state.chatroom.lastMessageId);
+  const _refreshSec = useAppSelector(state => state.chatroom.refreshIntervalSec);
+  const _messages = useAppSelector(state => state.chatroom.messages);
+  const dispatch = useAppDispatch();
 
-const ChatContainer: React.FC<Props> = () => {
-  const _scope = useSelector(selectChatroomName);
-  const reqHeaders = new Headers();
-  reqHeaders.append('Content-Type', 'application/json');
-  const rawData = JSON.stringify({
-    "json": true,
-    "code": "chatexample1",
-    "scope": _scope,
-    "table": "messages",
-    "table_key": "",
-    "lower_bound": null,
-    "upper_bound": null,
-    "index_position": 1,
-    "key_type": "",
-    "limit": "100",
-    "reverse": false,
-    "show_payer": false
-  });
-  const resp = useFetch<MessageRows>('https://wax.pink.gg/v1/chain/get_table_rows', {
-    method: 'POST',
-    headers: reqHeaders,
-    body: rawData
-  });
-  if (resp.error) {
-    console.log(resp.error);
-  }
-  return (
-    <Container fluid style={{ marginTop: 60 }}>
-      { (resp.status === 'init')  &&
-        <Alert>Loading...</Alert>
+  React.useEffect(() => {
+    getTableRows(_scope, _lastMessageId).then(resp => {
+      if (resp.rows.length === 0) return;
+      const lastId = resp.rows[resp.rows.length-1].message_id;
+      if (lastId > _lastMessageId) {
+        dispatch(setLastMessageId(lastId));
+        dispatch(appendMessages(resp.rows));
       }
-      { resp.data?.rows.map((msg: MessageRow) => (
-          <MessageBubble key={msg.message_id} text={msg.message} sender={msg.sender} alignment="left" />
+    });
+
+    const timer = setInterval(() => {
+      setCounter(conter + 1);
+    }, _refreshSec*1000);
+
+    return () => clearInterval(timer);
+  });
+
+  return (
+    <Container fluid style={{ marginTop: 60, marginBottom: 60 }}>
+      { _messages.map((msg: MessageRow) => (
+        <MessageBubble key={msg.message_id} messageId={msg.message_id} text={msg.message} sender={msg.sender} alignment={msg.sender == _sender ? 'right': 'left'} />
         ))
       }
     </Container>

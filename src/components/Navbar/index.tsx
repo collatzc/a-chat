@@ -1,5 +1,6 @@
 import React from 'react';
-import { Navbar, Nav, Modal, Button } from 'react-bootstrap';
+import { Navbar, Nav, Form, Col, Modal, Button } from 'react-bootstrap';
+import { setChatroom, setRefreshIntervalSec, useAppSelector, useAppDispatch } from 'src/store';
 import logo from 'src/assets/loading.gif';
 
 type Props = {
@@ -7,10 +8,37 @@ type Props = {
 };
 
 const Navbar_: React.FC<Props> = (props) => {
+  const dispatch = useAppDispatch();
+  const _scope = useAppSelector(state => state.chatroom.scope);
+  const _refreshSec = useAppSelector(state => state.chatroom.refreshIntervalSec);
+  const [chatroomName, setChatroomName] = React.useState(_scope);
+  const [refreshSec, setRefreshSec] = React.useState(_refreshSec);
   const [showSettings, setShowSettings] = React.useState(false);
 
   const handleShowSettings = () => setShowSettings(true);
   const handleCloseSettings = () => setShowSettings(false);
+
+  const handleChatroomNameChange = (event: any) => {
+    setChatroomName(event.currentTarget.value);
+  }
+  const handleChatroomNameUpdate = (event: any) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (chatroomName.length !== 12) {
+      return;
+    }
+    dispatch(setChatroom(chatroomName));
+  }
+
+  const handleRefreshSecChange = (event: any) => {
+    setRefreshSec(Number(event.currentTarget.value));
+  }
+  const handleRefreshSecUpdate = (event: any) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dispatch(setRefreshIntervalSec(refreshSec));
+  }
 
   return (
     <>
@@ -45,6 +73,44 @@ const Navbar_: React.FC<Props> = (props) => {
           </div>
           <div>
             <h5>Chatroom</h5>
+            <Form onSubmit={handleChatroomNameUpdate}>
+              <Form.Row className="align-items-center">
+                <Col xs="auto">
+                  <Form.Control
+                    value={chatroomName}
+                    onChange={handleChatroomNameChange}
+                    className="mb-2"
+                    placeholder="Chatroom name"
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Button type="button" className="mb-2" onClick={handleChatroomNameUpdate}>
+                    Update
+                  </Button>
+                </Col>
+              </Form.Row>
+            </Form>
+          </div>
+          <div>
+            <h5>Refresh Interval(seconds)</h5>
+            <Form onSubmit={handleRefreshSecUpdate}>
+              <Form.Row className="align-items-center">
+                <Col xs="auto">
+                  <Form.Control
+                    type="number"
+                    value={refreshSec}
+                    onChange={handleRefreshSecChange}
+                    className="mb-2"
+                    placeholder="Refresh in seconds"
+                  />
+                </Col>
+                <Col xs="auto">
+                  <Button type="button" className="mb-2" onClick={handleRefreshSecUpdate}>
+                    Update
+                  </Button>
+                </Col>
+              </Form.Row>
+            </Form>
           </div>
         </Modal.Body>
         <Modal.Footer>
