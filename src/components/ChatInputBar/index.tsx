@@ -98,13 +98,12 @@ const ChatInputBar: React.FC<UALProps> = (props) => {
   };
 
   const handleCloseEditing = () => {
-
     setEditingId(-1);
   };
 
   const { ual } = props;
   React.useEffect(() => {
-    if (ual.activeUser && ual.activeUser.accountName != _sender) {
+    if (ual.activeUser && ual.activeUser.accountName !== _sender) {
       dispatch(setSender(ual.activeUser.accountName));
     }
     if (_editingMessageId !== -1) {
@@ -113,7 +112,7 @@ const ChatInputBar: React.FC<UALProps> = (props) => {
     }
 
     return () => {};
-  }, [dispatch, setSender, ual, _sender, _editingMessageId]);
+  }, [dispatch, ual, _sender, _editingMessageId]);
 
   return (
     <Navbar bg="dark" variant="dark" fixed="bottom">
@@ -121,16 +120,18 @@ const ChatInputBar: React.FC<UALProps> = (props) => {
         { ual.activeUser != null ?
           <>
             <Navbar.Brand className="d-none d-lg-block">
-              <img src={anchorLogo} width="15" height="15" />
+              <img src={anchorLogo} alt="anchor logo" width="15" height="15" />
             </Navbar.Brand>
             <NavDropdown title={`${ual.activeUser.accountName} (${ual.activeUser.requestPermission})`} id="activeUserMenu" drop="up" className="d-none d-lg-block">
-              <NavDropdown.Item>Management</NavDropdown.Item>
-              <NavDropdown.Divider />
               <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
             </NavDropdown>
-            <NavDropdown title="Manage" id="activeUserMenu" drop="up" className="d-lg-none">
-              <NavDropdown.Item>{`${ual.activeUser.accountName} (${ual.activeUser.requestPermission})`}</NavDropdown.Item>
-              <NavDropdown.Item>Management</NavDropdown.Item>
+            <NavDropdown
+              title={<img src={anchorLogo} alt="anchor logo" width="15" height="15" />}
+              id="activeUserMenu"
+              drop="up"
+              className="d-lg-none"
+            >
+              <Navbar.Text style={{ color: '#000', marginLeft: '1.5rem' }}>{`${ual.activeUser.accountName} (${ual.activeUser.requestPermission})`}</Navbar.Text>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
             </NavDropdown>

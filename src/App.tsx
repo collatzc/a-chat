@@ -12,7 +12,7 @@ type Props = {
 };
 
 const App: React.FC<Props> = (props) => {
-  const chain = {
+  const chainWAX = {
     "chainId": "1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4",
     "name": "WAX",
     "rpcEndpoints": [
@@ -25,7 +25,7 @@ const App: React.FC<Props> = (props) => {
   };
 
   const getAuthenticators = () => {
-    const anchor = new Anchor([ chain ], {
+    const anchor = new Anchor([ chainWAX ], {
       appName: props.appName,
     });
     return [
@@ -42,8 +42,8 @@ const App: React.FC<Props> = (props) => {
       <UALProvider
         appName={props.appName}
         authenticators={authenticators}
-        chains={[chain]}
-        key={chain.chainId}
+        chains={[chainWAX]}
+        key={chainWAX.chainId}
       >
         <ChatInputBar />
       </UALProvider>

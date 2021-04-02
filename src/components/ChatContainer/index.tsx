@@ -39,7 +39,7 @@ const ChatContainer: React.FC<{}> = () => {
   return (
     <Container fluid style={{ marginTop: 60, marginBottom: 60 }}>
       { _messages.map((msg: MessageRow) => (
-        <MessageBubble key={msg.message_id} messageId={msg.message_id} text={msg.message} sender={msg.sender} alignment={msg.sender == _sender ? 'right': 'left'} />
+        <MessageBubble key={msg.message_id} messageId={msg.message_id} text={msg.message} sender={msg.sender} alignment={msg.sender === _sender ? 'right': 'left'} />
         ))
       }
     </Container>
