@@ -9,7 +9,7 @@ type Props = {
   alignment: "left" | "right";
 };
 
-const MessageBubble: React.FC<Props> = (props) => {
+const MessageBubble: React.FC<Props> = props => {
   const dispatch = useAppDispatch();
 
   const handleEdit = (event: any) => {

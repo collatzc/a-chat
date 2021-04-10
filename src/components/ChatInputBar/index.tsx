@@ -4,7 +4,7 @@ import { UALProps, withUAL } from 'ual-reactjs-renderer';
 import { setSender, setEditingMessageId, clearMessages, useAppSelector, useAppDispatch } from 'src/store';
 import anchorLogo from 'src/assets/anchor.svg';
 
-const ChatInputBar: React.FC<UALProps> = (props) => {
+const ChatInputBar: React.FC<UALProps> = props => {
   const _sender = useAppSelector(state => state.chatroom.sender);
   const _chatroomName = useAppSelector(state => state.chatroom.scope);
   const _editingMessageId = useAppSelector(state => state.chatroom.editingMessageId);
@@ -50,6 +50,7 @@ const ChatInputBar: React.FC<UALProps> = (props) => {
           ]
         }, { expireSeconds: 120, blocksBehind: 3 });
         setIptMessage('');
+        dispatch(clearMessages());
       } catch (err) {
         console.error(err);
       } finally {

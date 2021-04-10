@@ -1,4 +1,3 @@
-import { JsonRpc }from 'eosjs';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { createSlice, PayloadAction, configureStore } from '@reduxjs/toolkit';
 
@@ -8,6 +7,7 @@ interface IChatroomState {
   messages: MessageRow[];
   refreshIntervalSec: number;
   lastMessageId: number;
+  lastActionSeq: number;
   editingMessageId: number;
 }
 
@@ -17,20 +17,9 @@ interface MessageRow {
   sender: string;
 };
 
-const tableName = 'messages';
-const rpc = new JsonRpc(`https://wax.pink.gg`);
-
-export const getTableRows = (scope: string, lastId: number) => {
-  const _index = lastId === -1 ? 0 : lastId + 1;
-  return rpc.get_table_rows({
-    json: true,
-    code: 'chatexample1',
-    scope: scope,
-    index_position: 1,
-    lower_bound: _index,
-    table: tableName,
-    limit: 100
-  });
+type MessageUpdated = {
+  messages: MessageRow[];
+  lastMessageId: number;
 };
 
 const initialChatroomState: IChatroomState = {
@@ -39,6 +28,7 @@ const initialChatroomState: IChatroomState = {
   messages: [],
   refreshIntervalSec: 5,
   lastMessageId: -1,
+  lastActionSeq: -1,
   editingMessageId: -1,
 };
 
@@ -54,15 +44,20 @@ const chatroomSlice = createSlice({
     setSender: (state, action: PayloadAction<string>) => {
       state.sender = action.payload;
     },
-    appendMessages: (state, action: PayloadAction<MessageRow[]>) => {
-      state.messages.push(...action.payload);
+    appendMessages: (state, action: PayloadAction<MessageUpdated>) => {
+      state.lastMessageId = action.payload.lastMessageId;
+      state.messages.push(...action.payload.messages);
     },
     clearMessages: (state) => {
+      state.lastActionSeq = -1;
       state.lastMessageId = -1;
       state.messages = [];
     },
     setLastMessageId: (state, action: PayloadAction<number>) => {
       state.lastMessageId = action.payload;
+    },
+    setLastActionSeq: (state, action: PayloadAction<number>) => {
+      state.lastActionSeq = action.payload;
     },
     setEditingMessageId: (state, action: PayloadAction<number>) => {
       state.editingMessageId = action.payload;
@@ -73,7 +68,7 @@ const chatroomSlice = createSlice({
   },
 });
 
-export const { setChatroom, setSender, appendMessages, clearMessages, setLastMessageId, setEditingMessageId, setRefreshIntervalSec } = chatroomSlice.actions;
+export const { setChatroom, setSender, appendMessages, clearMessages, setLastMessageId, setLastActionSeq, setEditingMessageId, setRefreshIntervalSec } = chatroomSlice.actions;
 
 export const store = configureStore({
   reducer: {
