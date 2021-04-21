@@ -38,6 +38,7 @@ const chatroomSlice = createSlice({
   reducers: {
     setChatroom: (state, action: PayloadAction<string>) => {
       state.scope = action.payload;
+      state.lastActionSeq = -1;
       state.lastMessageId = -1;
       state.messages = [];
     },
